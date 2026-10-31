@@ -1,0 +1,8 @@
+[{
+  "relation": ["delegate_permission/common.handle_all_urls"],
+  "target": {
+    "namespace": "android_app",
+    "package_name": "ua.vn.trofeini",
+    "sha256_cert_fingerprints": ["CD:4D:6A:62:1A:11:24:D2:1D:6F:D3:07:EC:8D:28:65:13:16:6A:7A:76:93:6E:C0:54:61:4D:53:96:58:D1:25"]
+  }
+}]

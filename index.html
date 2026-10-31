@@ -1,0 +1,572 @@
+<!doctype html>
+<html lang="uk">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Трофейні шахи – шахи з одним новим правилом онлайн</title>
+<meta name="description" content="Шахи з одним новим правилом: фігура, що взяла, отримує одноразовий хід узятої. Грайте з комп’ютером (7 рівнів), удвох або онлайн з другом.">
+<link rel="canonical" href="https://trofeini.vn.ua/">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Трофейні шахи">
+<meta property="og:title" content="Трофейні шахи – шахи з одним новим правилом">
+<meta property="og:description" content="Шахи з одним новим правилом: фігура, що взяла, отримує одноразовий хід узятої. Грайте з комп’ютером (7 рівнів), удвох або онлайн з другом.">
+<meta property="og:url" content="https://trofeini.vn.ua/">
+<meta property="og:image" content="https://trofeini.vn.ua/icon-512.png">
+<meta property="og:image:width" content="512">
+<meta property="og:image:height" content="512">
+<meta property="og:image:alt" content="Іконка гри: білий кінь із золотим значком заряду ферзя">
+<meta property="og:locale" content="uk_UA">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Трофейні шахи – шахи з одним новим правилом">
+<meta name="twitter:description" content="Шахи з одним новим правилом: фігура, що взяла, отримує одноразовий хід узятої. Грайте з комп’ютером (7 рівнів), удвох або онлайн з другом.">
+<meta name="twitter:image" content="https://trofeini.vn.ua/icon-512.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@100..125,500..800&display=swap">
+<script type="application/ld+json">{"@context":"https://schema.org","@type":["VideoGame","WebApplication"],"name":"Трофейні шахи","url":"https://trofeini.vn.ua/","image":"https://trofeini.vn.ua/icon-512.png","description":"Шахи з одним новим правилом: фігура, що взяла, отримує одноразовий хід узятої. Грайте з комп’ютером (7 рівнів), удвох або онлайн з другом.","inLanguage":"uk","applicationCategory":"GameApplication","operatingSystem":"Web, Android","gamePlatform":["Web Browser","Android"],"genre":["Chess Variant","Board Game","Strategy"],"playMode":["SinglePlayer","MultiPlayer"],"numberOfPlayers":{"@type":"QuantitativeValue","minValue":1,"maxValue":2},"isAccessibleForFree":true,"offers":{"@type":"Offer","price":"0","priceCurrency":"UAH"}}</script>
+<meta name="theme-color" content="#302e2b">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" href="favicon.ico" sizes="16x16 32x32 48x48">
+<link rel="icon" href="favicon-48.png" type="image/png" sizes="48x48">
+<link rel="icon" href="icon-192.png" type="image/png" sizes="192x192">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Трофейні шахи">
+<style>:root{padding-top:env(safe-area-inset-top);padding-bottom:env(safe-area-inset-bottom)}body{margin:0}[hidden]{display:none!important}</style>
+</head>
+<body>
+<style>
+/* Layout: звичний екран онлайн-шахів на телефоні - суперник над дошкою, ви під нею, далі стан, кнопки дій і запис.
+   Один темний вигляд (свідомо, як звикли гравці), зелено-кремова дошка, жовта підсвітка останнього ходу.
+   Золото - тільки для зарядів: це єдине, чого немає у звичайних шахах. */
+:root{
+  --bg:#302e2b; --panel:#262421; --panel-2:#3c3a37; --panel-3:#4a4744;
+  --ink:#ffffff; --ink-read:#e8e7e5; --ink-soft:#bab9b8; --ink-dim:#8b8987; --rule:#45423e;
+  --accent:#81b64c; --accent-deep:#45753c; --accent-ink:#ffffff; --accent-soft:rgba(129,182,76,.22);
+  --gold:#e6b43c; --gold-soft:rgba(230,180,60,.16); --gold-ink:#f0c860;
+  --danger:#e04a3b; --danger-soft:rgba(224,74,59,.22);
+  --sq-light:#eeeed2; --sq-dark:#769656;
+  --coord-on-light:#769656; --coord-on-dark:#eeeed2;
+  --sel:rgba(255,255,51,.5); --last-from:rgba(255,255,51,.5); --last-to:rgba(255,255,51,.5);
+  --dot:rgba(0,0,0,.16);
+  --clock-w-bg:#f2f1ef; --clock-w-ink:#312e2b; --clock-b-bg:#1d1c1a; --clock-b-ink:#ffffff;
+    --f-ui:-apple-system,BlinkMacSystemFont,"Segoe UI",system-ui,Helvetica,Arial,sans-serif;
+  --f-brand:"Archivo","Helvetica Neue",Arial,sans-serif;
+  --f-num:-apple-system,BlinkMacSystemFont,"Segoe UI",system-ui,Helvetica,Arial,sans-serif;
+  --r-md:8px; --r-sm:5px;
+  color-scheme:dark;
+}
+html,body{height:100%}
+body{background:var(--bg);color:var(--ink);font-family:var(--f-ui);font-size:15px;
+  padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));padding-block:0;
+  -webkit-tap-highlight-color:transparent}
+.app{max-width:560px;margin:0 auto;padding-block:8px 24px;display:flex;flex-direction:column;gap:8px;
+  --board:min(560px, 100vw - 32px, max(288px, 100dvh - 296px));--sq:calc(var(--board) / 8)}
+@supports not (height:100dvh){.app{--board:min(560px, 100vw - 32px)}}
+button{font:inherit;color:inherit}
+
+/* шапка */
+.bar{display:flex;align-items:center;justify-content:space-between;gap:10px;min-height:44px}
+.brand{margin:0;display:flex;align-items:center;gap:9px;font-family:var(--f-brand);font-weight:800;font-size:17px;font-stretch:106%;letter-spacing:-.015em;line-height:1;min-width:0}
+.brand .word{white-space:nowrap;overflow:hidden;text-overflow:ellipsis;min-width:0}
+.brand .word span{color:var(--gold)}
+.bar .row{flex-wrap:nowrap;flex:none}
+.logo{width:30px;height:30px;border-radius:7px;background:var(--accent);display:grid;place-items:center;position:relative;flex:none}
+.logo .pc{width:24px;height:24px}
+.logo::after{content:"";position:absolute;top:-3px;right:-3px;width:11px;height:11px;border-radius:50%;background:var(--gold);box-shadow:0 0 0 2px var(--bg)}
+.btn{background:var(--panel-2);border:0;border-radius:var(--r-md);padding:9px 14px;font-weight:700;font-size:14px;cursor:pointer;min-height:40px;color:var(--ink);
+  display:inline-flex;align-items:center;justify-content:center;gap:6px;box-shadow:0 3px 0 var(--panel)}
+.btn:hover{background:var(--panel-3)}
+.btn:active{transform:translateY(2px);box-shadow:0 1px 0 var(--panel)}
+.btn:focus-visible,.sq:focus-visible,.chip:focus-visible,.tool:focus-visible{outline:2px solid var(--ink);outline-offset:2px}
+/* у клітинки рамка фокуса - всередині: зовні її наполовину закривали б сусідні поля */
+.sq:focus-visible{outline-offset:-3px;z-index:5}
+.btn.primary{background:var(--accent);color:var(--accent-ink);box-shadow:0 3px 0 var(--accent-deep);text-shadow:0 1px 0 rgba(0,0,0,.2)}
+.btn.primary:hover{background:#95c65e}
+.btn.primary:active{box-shadow:0 1px 0 var(--accent-deep)}
+.btn[disabled]{opacity:.45;cursor:default;transform:none}
+.row{display:flex;gap:8px;flex-wrap:wrap}
+
+/* рядки гравців: аватар, ім’я, узяті фігури; хто ходить - видно за годинником */
+.player{display:flex;align-items:center;gap:10px;min-height:44px}
+.avatar{width:40px;height:40px;border-radius:3px;background:#d9d8d6;display:grid;place-items:center;flex:none;--sq:40px}
+.avatar .pc{width:34px;height:34px}
+.pname{flex:1;min-width:0;display:flex;flex-direction:column;gap:2px;align-self:flex-start;padding-top:1px}
+.who{font-weight:600;font-size:14px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;line-height:1.3}
+.pname .tomove{display:none}
+/* узяті фігури: однакові трохи накладаються, групи розділені; праворуч перевага */
+.captured{display:flex;align-items:center;flex-wrap:nowrap;overflow:hidden;min-height:18px;--sq:20px}
+.captured:empty{display:none}
+.captured .grp{display:inline-flex;margin-right:2px}
+.captured .pc{width:21px;height:21px;margin-right:-8px}
+/* узяті чорні на темному тлі - зі світлим обведенням, щоб їх було видно */
+.captured .pc.b{filter:drop-shadow(0 0 1px rgba(255,255,255,.95)) drop-shadow(0 0 1px rgba(255,255,255,.7))}
+.captured .grp .pc:last-child{margin-right:0}
+.captured .adv{font-size:12px;font-weight:600;color:var(--ink-soft);margin-left:3px}
+.charges{display:flex;gap:3px;min-width:0}
+.clock{font-family:var(--f-num);font-weight:700;font-size:21px;font-variant-numeric:tabular-nums;border-radius:var(--r-sm);padding:7px 10px;min-width:96px;text-align:right;
+  background:var(--clock-b-bg);color:var(--clock-b-ink);opacity:.55;transition:opacity .15s,background-color .15s}
+.clock.cw{background:var(--clock-w-bg);color:var(--clock-w-ink)}
+.player.active .clock{opacity:1}
+.clock.low{background:var(--danger)!important;color:#fff!important;opacity:1}
+.clock[hidden]{display:none}
+
+/* дошка */
+.board-wrap{display:flex;justify-content:center}
+.board{position:relative;width:var(--board);height:var(--board);display:grid;grid-template-columns:repeat(8,1fr);grid-template-rows:repeat(8,1fr);
+  border-radius:3px;overflow:hidden;touch-action:none;user-select:none;-webkit-user-select:none;-webkit-touch-callout:none}
+.sq{position:relative;border:0;padding:0;margin:0;display:grid;place-items:center;cursor:pointer;background:var(--sq-light)}
+.sq.dark{background:var(--sq-dark)}
+.sq.lift{z-index:4}
+/* перетягування: фігура їде за пальцем, на своєму полі лишається її тінь, поле під пальцем обведене */
+.drag-ghost{position:fixed!important;left:0;top:0;z-index:60;pointer-events:none;background:transparent!important;will-change:transform;filter:drop-shadow(0 6px 8px rgba(0,0,0,.35))}
+.sq.drag-src > .pc,.sq.drag-src > .badge{opacity:.3}
+.sq.drag-over::after{content:"";position:absolute;inset:0;box-shadow:inset 0 0 0 calc(var(--sq) * .07) rgba(255,255,255,.8);pointer-events:none;z-index:3}
+.sq.last::before,.sq.sel::before,.sq.threat::before,.sq.check::before{content:"";position:absolute;inset:0;pointer-events:none}
+.sq.last.from::before{background:var(--last-from)}
+.sq.last.to::before{background:var(--last-to)}
+.sq.sel::before{background:var(--sel)}
+.sq.threat::before{background:repeating-linear-gradient(135deg,rgba(210,40,30,.45) 0 3px,transparent 3px 8px);box-shadow:inset 0 0 0 2px rgba(210,40,30,.6)}
+.sq.check::before{background:radial-gradient(circle,rgba(235,40,30,.9) 0%,rgba(235,40,30,.5) 45%,transparent 75%)}
+.pc{position:relative;z-index:1;display:block;width:100%;height:100%;background:center/contain no-repeat;pointer-events:none}
+/* pieces:begin - згенеровано web/pieces/embed.mjs, не правити вручну.
+Фігури: набір «celtic» (https://github.com/maurimo/chess-art).
+
+MIT License
+
+Copyright (c) Maurizio Monge
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
+*/
+.pc.w.fk{background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' style='color-scheme:light only' xmlns:xlink='http://www.w3.org/1999/xlink' id='king' viewBox='0 0 933 933'%3E%3Cstyle id='style-base'%3E.base%7Bfill-opacity:1%3Bfill-rule:evenodd%3Bstroke-miterlimit:4%3Bstroke-dasharray:none%3Bstroke-linecap:round%3Bstroke-linejoin:round%3Bstroke-opacity:1%7D.stroke-medium%7Bstroke-width:20%7D.stroke-color%7Bstroke:%23000%7D%3C/style%3E%3Cdefs id='defs787'%3E%3ClinearGradient xlink:href='%23fillGradient' id='main-gradient' x1='660.5' x2='757.7' y1='90.4' y2='103.7' gradientTransform='matrix(6.24848 0 0 7.12397 -3963 -235)' gradientUnits='userSpaceOnUse'/%3E%3ClinearGradient id='fillGradient'%3E%3Cstop id='stop0' offset='0' stop-color='%23fff' stop-opacity='1'/%3E%3Cstop id='stop1' offset='1' stop-color='%23bfd3d7' stop-opacity='1'/%3E%3C/linearGradient%3E%3C/defs%3E%3Cpath id='boundary' fill='none' stroke-width='35' d='M422 56c-7 24 3 53 2 83l-94-4v93l92-4-5 105-43-3C189 247 38 189 177 445c13 23 75 75 39 110 14 37 45 29 63 72 7 19 11 92-29 117-6 3-66 18-70 24-33 41-15 110 45 114 42 2 453 3 497-2 67-7 77-77 46-116-4-6-57-14-72-25-27-20-41-87-34-112 9-39 45-36 55-68-57-41 31-83 45-110 133-252 2-202-189-122l-48 1-5-104 91 4v-93l-93 4c-3-28 10-63 2-83z' class='base stroke-color'/%3E%3Cpath id='main' fill='url(%23main-gradient)' d='M422 56c-7 24 3 53 2 83l-94-4v93l92-4-5 105-43-3C189 247 38 189 177 445c13 23 75 75 39 110 14 37 45 29 63 72 7 19 11 92-29 117-6 3-66 18-70 24-33 41-15 110 45 114 42 2 453 3 497-2 67-7 77-77 46-116-4-6-57-14-72-25-27-20-41-87-34-112 9-39 45-36 55-68-57-41 31-83 45-110 133-252 2-202-189-122l-48 1-5-104 91 4v-93l-93 4c-3-28 10-63 2-83z' class='base stroke-color stroke-medium'/%3E%3Cpath id='deco-side' fill='none' d='M696 880c67-7 81-68 50-107-4-6-52-9-67-20-27-20-42-101-36-126 10-39 36-36 46-68-47-45 31-74 45-100 133-253 41-194-171-119l-52-1-5-130 87 4 2-67-90 2c-6-29 11-58 3-82m-91 146-75-1' class='base stroke-color stroke-medium' opacity='.5'/%3E%3Cpath id='deco-lines' fill='none' d='M258 560c152 17 275 15 382 0M311 728h242zm-56 65h429z' class='base stroke-color stroke-medium' opacity='.5'/%3E%3Cpath id='deco-top' fill='none' d='M376 335c-55-13-170-60-216-59-13 0-21 4-22 13m72 176c58 71 494 59 555-95' class='base stroke-color stroke-medium' opacity='.5'/%3E%3C/svg%3E")}
+.pc.w.fq{background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' style='color-scheme:light only' xmlns:xlink='http://www.w3.org/1999/xlink' id='queen' viewBox='0 0 933 933'%3E%3Cstyle id='style-base'%3E.base%7Bfill-opacity:1%3Bfill-rule:evenodd%3Bstroke-miterlimit:4%3Bstroke-dasharray:none%3Bstroke-linecap:round%3Bstroke-linejoin:round%3Bstroke-opacity:1%7D.stroke-medium%7Bstroke-width:20%7D.stroke-color%7Bstroke:%23000%7D%3C/style%3E%3Cdefs id='defs1194'%3E%3ClinearGradient xlink:href='%23fillGradient' id='main-gradient' x1='660.5' x2='757.7' y1='90.4' y2='103.7' gradientTransform='matrix(6.24848 0 0 7.12396 -3975 -259)' gradientUnits='userSpaceOnUse'/%3E%3ClinearGradient id='fillGradient'%3E%3Cstop id='stop0' offset='0' stop-color='%23fff' stop-opacity='1'/%3E%3Cstop id='stop1' offset='1' stop-color='%23bfd3d7' stop-opacity='1'/%3E%3C/linearGradient%3E%3C/defs%3E%3Cpath id='boundary' fill='none' stroke-width='35' d='M593 82c-29 0-53 22-53 48 0 17 10 32 25 41-43 105-76 239-108 240-44 0-70-137-99-236 15-8 26-24 26-41 0-27-24-48-53-48s-52 21-52 48c0 23 18 42 42 46 10 109 28 237-10 259-39 23-84-108-150-212 8-9 13-20 13-32 0-26-23-48-52-48s-52 22-53 48c-2 41 44 48 53 48 50 127 52 174 80 292 10 39 46 39 63 81 8 19 11 93-28 117-6 4-65 19-69 24-32 41-15 110 45 114 43 3 450 4 493-1 67-8 78-78 47-116-5-6-56-14-71-25-27-20-40-88-34-113 10-39 47-35 56-68 38-140 36-179 97-305h4c29 0 53-21 53-48 0-26-24-48-53-48s-53 22-53 48c0 13 6 24 14 32-76 95-128 230-165 209-44-25-10-144 5-260 23-5 39-24 39-46 0-26-23-48-52-48' class='base stroke-color'/%3E%3Cpath id='main' fill='url(%23main-gradient)' d='M593 82c-29 0-53 22-53 48 0 17 10 32 25 41-43 105-76 239-108 240-44 0-70-137-99-236 15-8 26-24 26-41 0-27-24-48-53-48s-52 21-52 48c0 23 18 42 42 46 10 109 28 237-10 259-39 23-84-108-150-212 8-9 13-20 13-32 0-26-23-48-52-48s-52 22-53 48c-2 41 44 48 53 48 50 127 52 174 80 292 10 39 46 39 63 81 8 19 11 93-28 117-6 4-65 19-69 24-32 41-15 110 45 114 43 3 450 4 493-1 67-8 78-78 47-116-5-6-56-14-71-25-27-20-40-88-34-113 10-39 47-35 56-68 38-140 36-179 97-305h4c29 0 53-21 53-48 0-26-24-48-53-48s-53 22-53 48c0 13 6 24 14 32-76 95-128 230-165 209-44-25-10-144 5-260 23-5 39-24 39-46 0-26-23-48-52-48' class='base stroke-color stroke-medium'/%3E%3Cpath id='deco-lines' fill='none' d='M284 578h317zm12 140h243zm-55 74h428z' class='base stroke-color stroke-medium' opacity='.5'/%3E%3Cpath id='deco-side' fill='none' d='M590 440c-53-47-15-146-2-264 22-6 39-24 39-46 0-27-24-39-53-39m111 780c67-7 78-68 47-107-5-6-56-13-71-24-27-20-40-107-34-132 10-39 44-35 54-68 42-140 38-170 99-296h4c29 0 55-21 55-47 0-27-24-39-53-39' class='base stroke-color stroke-medium' opacity='.5'/%3E%3C/svg%3E")}
+.pc.w.fr{background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' style='color-scheme:light only' xmlns:xlink='http://www.w3.org/1999/xlink' id='rook' viewBox='0 0 933 933'%3E%3Cstyle id='style-base'%3E.base%7Bfill-opacity:1%3Bfill-rule:evenodd%3Bstroke-miterlimit:4%3Bstroke-dasharray:none%3Bstroke-linecap:round%3Bstroke-linejoin:round%3Bstroke-opacity:1%7D.stroke-medium%7Bstroke-width:20%7D.stroke-color%7Bstroke:%23000%7D%3C/style%3E%3Cdefs id='defs1553'%3E%3ClinearGradient xlink:href='%23fillGradient' id='main-gradient' x1='660.5' x2='757.7' y1='90.4' y2='103.7' gradientTransform='matrix(6.24848 0 0 7.11058 -3961 -265)' gradientUnits='userSpaceOnUse'/%3E%3ClinearGradient id='fillGradient'%3E%3Cstop id='stop0' offset='0' stop-color='%23fff' stop-opacity='1'/%3E%3Cstop id='stop1' offset='1' stop-color='%23bfd3d7' stop-opacity='1'/%3E%3C/linearGradient%3E%3C/defs%3E%3Cpath id='boundary' fill='none' stroke-width='35' d='M775 112H649v81l-114 9v-80l-131 1v81l-109-11v-81l-117 3c-12 98 48 121 7 191l101 53c5 107 28 247 19 315-35 27 32 53-55 71-10 2-58 9-62 14-32 41-15 110 45 114 43 3 432 3 476-2 67-7 77-77 46-116-4-6-42-12-59-15-78-13-19-43-54-62-11-74 9-210 20-320l104-51c-32-77 20-88 9-195' class='base stroke-color'/%3E%3Cpath id='main' fill='url(%23main-gradient)' d='M775 112H649v81l-114 9v-80l-131 1v81l-109-11v-81l-117 3c-12 98 48 121 7 191l101 53c5 107 28 247 19 315-35 27 32 53-55 71-10 2-58 9-62 14-32 41-15 110 45 114 43 3 432 3 476-2 67-7 77-77 46-116-4-6-42-12-59-15-78-13-19-43-54-62-11-74 9-210 20-320l104-51c-32-77 20-88 9-195' class='base stroke-color stroke-medium'/%3E%3Cpath id='deco-lines' fill='none' d='m239 277 389 2zm100 81h215zm0 331h243Zm-80 86h429Z' class='base stroke-color stroke-medium' opacity='.5'/%3E%3Cpath id='deco-side' fill='none' d='M670 871c67-7 100-61 69-99-5-6-43-16-60-19-78-13-21-56-56-75-11-74 11-223 23-333l99-51c-28-59 21-100 9-182' class='base stroke-color stroke-medium' opacity='.5'/%3E%3C/svg%3E")}
+.pc.w.fb{background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' style='color-scheme:light only' xmlns:xlink='http://www.w3.org/1999/xlink' id='bishop' viewBox='0 0 933 933'%3E%3Cstyle id='style-base'%3E.base%7Bfill-opacity:1%3Bfill-rule:evenodd%3Bstroke-miterlimit:4%3Bstroke-dasharray:none%3Bstroke-linecap:round%3Bstroke-linejoin:round%3Bstroke-opacity:1%7D.stroke-medium%7Bstroke-width:20%7D.stroke-color%7Bstroke:%23000%7D%3C/style%3E%3Cdefs id='defs1927'%3E%3ClinearGradient xlink:href='%23fillGradient' id='main-gradient' x1='683' x2='739.5' y1='74' y2='69' gradientTransform='matrix(6.26023 0 0 7.12396 -3967 -262)' gradientUnits='userSpaceOnUse'/%3E%3ClinearGradient id='fillGradient'%3E%3Cstop id='stop0' offset='0' stop-color='%23fff' stop-opacity='1'/%3E%3Cstop id='stop1' offset='1' stop-color='%23bfd3d7' stop-opacity='1'/%3E%3C/linearGradient%3E%3C/defs%3E%3Cpath id='boundary' fill='none' stroke-width='35' d='M468 50c-34 0-62 23-62 52 0 8 2 16 6 23-71 20-122 79-122 164 3 78 42 150 105 194-63 25-3 53-3 118-46 83-62 91-140 149-6 4-52 9-57 14-32 42-15 110 46 114 42 3 417 4 460-1 67-7 78-78 47-116-5-6-52-12-59-16-61-33-139-82-160-144 0-65 71-93 8-118 65-45 102-110 109-194 4-46-21-92-60-125l-65 146c-6 15-23 21-38 15-15-7-22-24-15-39l67-153a197 197 0 0 0-13-5c5-8 8-17 8-26 0-29-28-52-62-52' class='base stroke-color'/%3E%3Cpath id='main' fill='url(%23main-gradient)' d='M468 50c-34 0-62 23-62 52 0 8 2 16 6 23-71 20-122 79-122 164 3 78 42 150 105 194-63 25-3 53-3 118-46 83-62 91-140 149-6 4-52 9-57 14-32 42-15 110 46 114 42 3 417 4 460-1 67-7 78-78 47-116-5-6-52-12-59-16-61-33-139-82-160-144 0-65 71-93 8-118 65-45 102-110 109-194 4-46-21-92-60-125l-65 146c-6 15-23 21-38 15-15-7-22-24-15-39l67-153a197 197 0 0 0-13-5c5-8 8-17 8-26 0-29-28-52-62-52' class='base stroke-color stroke-medium'/%3E%3Cpath id='deco-lines' fill='none' d='M413 510h105zm-20 200h145zm-100 80h355z' class='base stroke-color stroke-medium' opacity='.5'/%3E%3Cpath id='deco-top' fill='none' d='M350 410c40 48 237 35 287-129' class='base stroke-color stroke-medium' opacity='.5'/%3E%3Cpath id='deco-side' fill='none' d='M685 867c67-7 77-49 46-88-5-6-52-11-58-15-62-34-139-92-160-153 0-66 70-113 7-137 65-45 102-110 110-195 4-46-5-52-44-85' class='base stroke-color stroke-medium' opacity='.5'/%3E%3C/svg%3E")}
+.pc.w.fn{background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' style='color-scheme:light only' xmlns:xlink='http://www.w3.org/1999/xlink' id='knight' viewBox='0 0 933 933'%3E%3Cstyle id='style-base'%3E.base%7Bfill-opacity:1%3Bfill-rule:evenodd%3Bstroke-miterlimit:4%3Bstroke-dasharray:none%3Bstroke-linecap:round%3Bstroke-linejoin:round%3Bstroke-opacity:1%7D.stroke-medium%7Bstroke-width:20%7D.stroke-color%7Bstroke:%23000%7D%3C/style%3E%3Cdefs id='defs2202'%3E%3ClinearGradient xlink:href='%23fillGradient' id='main-gradient' x1='824.6' x2='992.7' y1='119.5' y2='168.5' gradientTransform='translate(-3372 -24)scale(4.2241)' gradientUnits='userSpaceOnUse'/%3E%3ClinearGradient id='fillGradient'%3E%3Cstop id='stop0' offset='0' stop-color='%23fff' stop-opacity='1'/%3E%3Cstop id='stop1' offset='1' stop-color='%23bfd3d7' stop-opacity='1'/%3E%3C/linearGradient%3E%3C/defs%3E%3Cpath id='boundary' fill='none' stroke-width='35' d='m394 44-24 83-59-68-4 89c-91 91-38 111-172 316-9 13-25 24-29 42-15 80 88 60 106 69 71-57 100-58 137-98 42 15 108-3 147-45-26 77-136 132-169 267 39 37 0 74-47 71-52 12-34 109 19 109l452-3c63 0 72-92 30-108-40 0-58-41-26-69 4-74 3-143-12-214-2-7 2-22 10-24-6-23-30-45-40-69-5-11-18-17 19-18-11-22-61-58-76-78-6-7 25-13 19-19-35-37-85-50-109-68-8-6 23-15 14-21-33-21-102-48-145-65z' class='base stroke-color'/%3E%3Cpath id='main' fill='url(%23main-gradient)' d='m394 44-24 83-59-68-4 89c-91 91-38 111-172 316-9 13-25 24-29 42-15 80 88 60 106 69 71-57 100-58 137-98 42 15 108-3 147-45-26 77-136 132-169 267 39 37 0 74-47 71-52 12-34 109 19 109l452-3c63 0 72-92 30-108-40 0-58-41-26-69 4-74 3-143-12-214-2-7 2-22 10-24-6-23-30-45-40-69-5-11-18-17 19-18-11-22-61-58-76-78-6-7 25-13 19-19-35-37-85-50-109-68-8-6 23-15 14-21-33-21-102-48-145-65z' class='base stroke-color stroke-medium'/%3E%3Cpath id='eyebrow' fill='none' d='M336 282c-28 2-50 16-65 41' class='base stroke-color stroke-medium'/%3E%3Cpath id='eye' fill='none' d='M310 316c12 8 25 5 22-12' class='base stroke-color stroke-medium'/%3E%3Cpath id='nose' fill='none' d='M155 501c-13-5-23 17-15 17' class='base stroke-color stroke-medium'/%3E%3Cpath id='cheek' fill='none' d='M508 405c10-13 9-19 11-27' class='base stroke-color stroke-medium'/%3E%3Cpath id='deco-lines' fill='none' d='M644 699H370zm64 64H360z' class='base stroke-color stroke-medium' opacity='.5'/%3E%3Cpath id='deco-side' fill='none' d='M723 876c63 0 78-76 36-92-39 0-58-60-25-88 3-74 3-143-13-213-2-7 2-23 11-24-7-24-31-36-41-60-5-12-18-17 20-19-12-21-61-57-77-77-5-7 25-13 19-20-34-36-84-49-109-68-8-6 23-14 15-20-33-22-81-55-124-72' class='base stroke-color stroke-medium' opacity='.5'/%3E%3C/svg%3E")}
+.pc.w.fp{background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' style='color-scheme:light only' xmlns:xlink='http://www.w3.org/1999/xlink' id='pawn' viewBox='0 0 933 933'%3E%3Cstyle id='style-base'%3E.base%7Bfill-opacity:1%3Bfill-rule:evenodd%3Bstroke-miterlimit:4%3Bstroke-dasharray:none%3Bstroke-linecap:round%3Bstroke-linejoin:round%3Bstroke-opacity:1%7D.stroke-medium%7Bstroke-width:20%7D.stroke-color%7Bstroke:%23000%7D%3C/style%3E%3Cdefs id='defs2718'%3E%3ClinearGradient xlink:href='%23fillGradient' id='main-gradient' x1='462.1' x2='1135.2' y1='776.1' y2='839.4' gradientTransform='matrix(.64593 0 0 .64727 -27 91)' gradientUnits='userSpaceOnUse'/%3E%3ClinearGradient id='fillGradient'%3E%3Cstop id='stop0' offset='0' stop-color='%23fff' stop-opacity='1'/%3E%3Cstop id='stop1' offset='1' stop-color='%23bfd3d7' stop-opacity='1'/%3E%3C/linearGradient%3E%3C/defs%3E%3Cpath id='boundary' fill='none' stroke-width='35' d='M464 200c-72 1-130 58-135 124-2 33 46 89 74 106-138 31-3 71-3 128 0 40-53 66-24 91-16 64-63 88-119 114-28 35-13 95 39 98 37 3 307 3 345-1 59-6 68-67 41-101-57-17-119-42-131-108 30-26-32-53-32-93 0-57 150-90 7-128 27-17 72-73 73-106 1-65-66-125-135-124' class='base stroke-color'/%3E%3Cpath id='main' fill='url(%23main-gradient)' d='M464 200c-72 1-130 58-135 124-2 33 46 89 74 106-138 31-3 71-3 128 0 40-53 66-24 91-16 64-63 88-119 114-28 35-13 95 39 98 37 3 307 3 345-1 59-6 68-67 41-101-57-17-119-42-131-108 30-26-32-53-32-93 0-57 150-90 7-128 27-17 72-73 73-106 1-65-66-125-135-124' class='base stroke-color stroke-medium'/%3E%3Cpath id='deco-side' fill='none' d='M618 864c58-7 67-58 40-92-57-18-118-52-131-118 30-25-31-52-31-93 0-57 150-90 6-127 28-18 72-74 73-107 2-65-58-120-127-119' class='base stroke-color stroke-medium' opacity='.5'/%3E%3Cpath id='deco-lines' fill='none' d='M417 466h94zm-9 162h112zm-99 153h320z' class='base stroke-color stroke-medium' opacity='.5'/%3E%3C/svg%3E")}
+.pc.b.fk{background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' style='color-scheme:light only' xmlns:xlink='http://www.w3.org/1999/xlink' id='king' viewBox='0 0 933 933'%3E%3Cstyle id='style-base'%3E.base%7Bfill-opacity:1%3Bfill-rule:evenodd%3Bstroke-miterlimit:4%3Bstroke-dasharray:none%3Bstroke-linecap:round%3Bstroke-linejoin:round%3Bstroke-opacity:1%7D.stroke-medium%7Bstroke-width:20%7D.stroke-color%7Bstroke:%23000%7D%3C/style%3E%3Cdefs id='defs787'%3E%3ClinearGradient xlink:href='%23fillGradient' id='main-gradient' x1='660.5' x2='757.7' y1='90.4' y2='103.7' gradientTransform='matrix(6.24848 0 0 7.12397 -3963 -235)' gradientUnits='userSpaceOnUse'/%3E%3ClinearGradient id='fillGradient'%3E%3Cstop id='stop0' offset='0' stop-color='%237f899b' stop-opacity='1'/%3E%3Cstop id='stop1' offset='1' stop-color='%231c1c2f' stop-opacity='1'/%3E%3C/linearGradient%3E%3C/defs%3E%3Cpath id='boundary' fill='none' stroke-width='35' d='M422 56c-7 24 3 53 2 83l-94-4v93l92-4-5 105-43-3C189 247 38 189 177 445c13 23 75 75 39 110 14 37 45 29 63 72 7 19 11 92-29 117-6 3-66 18-70 24-33 41-15 110 45 114 42 2 453 3 497-2 67-7 77-77 46-116-4-6-57-14-72-25-27-20-41-87-34-112 9-39 45-36 55-68-57-41 31-83 45-110 133-252 2-202-189-122l-48 1-5-104 91 4v-93l-93 4c-3-28 10-63 2-83z' class='base stroke-color'/%3E%3Cpath id='main' fill='url(%23main-gradient)' d='M422 56c-7 24 3 53 2 83l-94-4v93l92-4-5 105-43-3C189 247 38 189 177 445c13 23 75 75 39 110 14 37 45 29 63 72 7 19 11 92-29 117-6 3-66 18-70 24-33 41-15 110 45 114 42 2 453 3 497-2 67-7 77-77 46-116-4-6-57-14-72-25-27-20-41-87-34-112 9-39 45-36 55-68-57-41 31-83 45-110 133-252 2-202-189-122l-48 1-5-104 91 4v-93l-93 4c-3-28 10-63 2-83z' class='base stroke-color stroke-medium'/%3E%3Cpath id='deco-side' fill='none' d='M696 880c67-7 81-68 50-107-4-6-52-9-67-20-27-20-42-101-36-126 10-39 36-36 46-68-47-45 31-74 45-100 133-253 41-194-171-119l-52-1-5-130 87 4 2-67-90 2c-6-29 11-58 3-82m-91 146-75-1' class='base stroke-color stroke-medium' opacity='.5'/%3E%3Cpath id='deco-lines' fill='none' d='M258 560c152 17 275 15 382 0M311 728h242zm-56 65h429z' class='base stroke-color stroke-medium' opacity='.5'/%3E%3Cpath id='deco-top' fill='none' d='M376 335c-55-13-170-60-216-59-13 0-21 4-22 13m72 176c58 71 494 59 555-95' class='base stroke-color stroke-medium' opacity='.5'/%3E%3C/svg%3E")}
+.pc.b.fq{background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' style='color-scheme:light only' xmlns:xlink='http://www.w3.org/1999/xlink' id='queen' viewBox='0 0 933 933'%3E%3Cstyle id='style-base'%3E.base%7Bfill-opacity:1%3Bfill-rule:evenodd%3Bstroke-miterlimit:4%3Bstroke-dasharray:none%3Bstroke-linecap:round%3Bstroke-linejoin:round%3Bstroke-opacity:1%7D.stroke-medium%7Bstroke-width:20%7D.stroke-color%7Bstroke:%23000%7D%3C/style%3E%3Cdefs id='defs1194'%3E%3ClinearGradient xlink:href='%23fillGradient' id='main-gradient' x1='660.5' x2='757.7' y1='90.4' y2='103.7' gradientTransform='matrix(6.24848 0 0 7.12396 -3975 -259)' gradientUnits='userSpaceOnUse'/%3E%3ClinearGradient id='fillGradient'%3E%3Cstop id='stop0' offset='0' stop-color='%237f899b' stop-opacity='1'/%3E%3Cstop id='stop1' offset='1' stop-color='%231c1c2f' stop-opacity='1'/%3E%3C/linearGradient%3E%3C/defs%3E%3Cpath id='boundary' fill='none' stroke-width='35' d='M593 82c-29 0-53 22-53 48 0 17 10 32 25 41-43 105-76 239-108 240-44 0-70-137-99-236 15-8 26-24 26-41 0-27-24-48-53-48s-52 21-52 48c0 23 18 42 42 46 10 109 28 237-10 259-39 23-84-108-150-212 8-9 13-20 13-32 0-26-23-48-52-48s-52 22-53 48c-2 41 44 48 53 48 50 127 52 174 80 292 10 39 46 39 63 81 8 19 11 93-28 117-6 4-65 19-69 24-32 41-15 110 45 114 43 3 450 4 493-1 67-8 78-78 47-116-5-6-56-14-71-25-27-20-40-88-34-113 10-39 47-35 56-68 38-140 36-179 97-305h4c29 0 53-21 53-48 0-26-24-48-53-48s-53 22-53 48c0 13 6 24 14 32-76 95-128 230-165 209-44-25-10-144 5-260 23-5 39-24 39-46 0-26-23-48-52-48' class='base stroke-color'/%3E%3Cpath id='main' fill='url(%23main-gradient)' d='M593 82c-29 0-53 22-53 48 0 17 10 32 25 41-43 105-76 239-108 240-44 0-70-137-99-236 15-8 26-24 26-41 0-27-24-48-53-48s-52 21-52 48c0 23 18 42 42 46 10 109 28 237-10 259-39 23-84-108-150-212 8-9 13-20 13-32 0-26-23-48-52-48s-52 22-53 48c-2 41 44 48 53 48 50 127 52 174 80 292 10 39 46 39 63 81 8 19 11 93-28 117-6 4-65 19-69 24-32 41-15 110 45 114 43 3 450 4 493-1 67-8 78-78 47-116-5-6-56-14-71-25-27-20-40-88-34-113 10-39 47-35 56-68 38-140 36-179 97-305h4c29 0 53-21 53-48 0-26-24-48-53-48s-53 22-53 48c0 13 6 24 14 32-76 95-128 230-165 209-44-25-10-144 5-260 23-5 39-24 39-46 0-26-23-48-52-48' class='base stroke-color stroke-medium'/%3E%3Cpath id='deco-lines' fill='none' d='M284 578h317zm12 140h243zm-55 74h428z' class='base stroke-color stroke-medium' opacity='.5'/%3E%3Cpath id='deco-side' fill='none' d='M590 440c-53-47-15-146-2-264 22-6 39-24 39-46 0-27-24-39-53-39m111 780c67-7 78-68 47-107-5-6-56-13-71-24-27-20-40-107-34-132 10-39 44-35 54-68 42-140 38-170 99-296h4c29 0 55-21 55-47 0-27-24-39-53-39' class='base stroke-color stroke-medium' opacity='.5'/%3E%3C/svg%3E")}
+.pc.b.fr{background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' style='color-scheme:light only' xmlns:xlink='http://www.w3.org/1999/xlink' id='rook' viewBox='0 0 933 933'%3E%3Cstyle id='style-base'%3E.base%7Bfill-opacity:1%3Bfill-rule:evenodd%3Bstroke-miterlimit:4%3Bstroke-dasharray:none%3Bstroke-linecap:round%3Bstroke-linejoin:round%3Bstroke-opacity:1%7D.stroke-medium%7Bstroke-width:20%7D.stroke-color%7Bstroke:%23000%7D%3C/style%3E%3Cdefs id='defs1553'%3E%3ClinearGradient xlink:href='%23fillGradient' id='main-gradient' x1='660.5' x2='757.7' y1='90.4' y2='103.7' gradientTransform='matrix(6.24848 0 0 7.11058 -3961 -265)' gradientUnits='userSpaceOnUse'/%3E%3ClinearGradient id='fillGradient'%3E%3Cstop id='stop0' offset='0' stop-color='%237f899b' stop-opacity='1'/%3E%3Cstop id='stop1' offset='1' stop-color='%231c1c2f' stop-opacity='1'/%3E%3C/linearGradient%3E%3C/defs%3E%3Cpath id='boundary' fill='none' stroke-width='35' d='M775 112H649v81l-114 9v-80l-131 1v81l-109-11v-81l-117 3c-12 98 48 121 7 191l101 53c5 107 28 247 19 315-35 27 32 53-55 71-10 2-58 9-62 14-32 41-15 110 45 114 43 3 432 3 476-2 67-7 77-77 46-116-4-6-42-12-59-15-78-13-19-43-54-62-11-74 9-210 20-320l104-51c-32-77 20-88 9-195' class='base stroke-color'/%3E%3Cpath id='main' fill='url(%23main-gradient)' d='M775 112H649v81l-114 9v-80l-131 1v81l-109-11v-81l-117 3c-12 98 48 121 7 191l101 53c5 107 28 247 19 315-35 27 32 53-55 71-10 2-58 9-62 14-32 41-15 110 45 114 43 3 432 3 476-2 67-7 77-77 46-116-4-6-42-12-59-15-78-13-19-43-54-62-11-74 9-210 20-320l104-51c-32-77 20-88 9-195' class='base stroke-color stroke-medium'/%3E%3Cpath id='deco-lines' fill='none' d='m239 277 389 2zm100 81h215zm0 331h243Zm-80 86h429Z' class='base stroke-color stroke-medium' opacity='.5'/%3E%3Cpath id='deco-side' fill='none' d='M670 871c67-7 100-61 69-99-5-6-43-16-60-19-78-13-21-56-56-75-11-74 11-223 23-333l99-51c-28-59 21-100 9-182' class='base stroke-color stroke-medium' opacity='.5'/%3E%3C/svg%3E")}
+.pc.b.fb{background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' style='color-scheme:light only' xmlns:xlink='http://www.w3.org/1999/xlink' id='bishop' viewBox='0 0 933 933'%3E%3Cstyle id='style-base'%3E.base%7Bfill-opacity:1%3Bfill-rule:evenodd%3Bstroke-miterlimit:4%3Bstroke-dasharray:none%3Bstroke-linecap:round%3Bstroke-linejoin:round%3Bstroke-opacity:1%7D.stroke-medium%7Bstroke-width:20%7D.stroke-color%7Bstroke:%23000%7D%3C/style%3E%3Cdefs id='defs1927'%3E%3ClinearGradient xlink:href='%23fillGradient' id='main-gradient' x1='683' x2='739.5' y1='74' y2='69' gradientTransform='matrix(6.26023 0 0 7.12396 -3967 -262)' gradientUnits='userSpaceOnUse'/%3E%3ClinearGradient id='fillGradient'%3E%3Cstop id='stop0' offset='0' stop-color='%237f899b' stop-opacity='1'/%3E%3Cstop id='stop1' offset='1' stop-color='%231c1c2f' stop-opacity='1'/%3E%3C/linearGradient%3E%3C/defs%3E%3Cpath id='boundary' fill='none' stroke-width='35' d='M468 50c-34 0-62 23-62 52 0 8 2 16 6 23-71 20-122 79-122 164 3 78 42 150 105 194-63 25-3 53-3 118-46 83-62 91-140 149-6 4-52 9-57 14-32 42-15 110 46 114 42 3 417 4 460-1 67-7 78-78 47-116-5-6-52-12-59-16-61-33-139-82-160-144 0-65 71-93 8-118 65-45 102-110 109-194 4-46-21-92-60-125l-65 146c-6 15-23 21-38 15-15-7-22-24-15-39l67-153a197 197 0 0 0-13-5c5-8 8-17 8-26 0-29-28-52-62-52' class='base stroke-color'/%3E%3Cpath id='main' fill='url(%23main-gradient)' d='M468 50c-34 0-62 23-62 52 0 8 2 16 6 23-71 20-122 79-122 164 3 78 42 150 105 194-63 25-3 53-3 118-46 83-62 91-140 149-6 4-52 9-57 14-32 42-15 110 46 114 42 3 417 4 460-1 67-7 78-78 47-116-5-6-52-12-59-16-61-33-139-82-160-144 0-65 71-93 8-118 65-45 102-110 109-194 4-46-21-92-60-125l-65 146c-6 15-23 21-38 15-15-7-22-24-15-39l67-153a197 197 0 0 0-13-5c5-8 8-17 8-26 0-29-28-52-62-52' class='base stroke-color stroke-medium'/%3E%3Cpath id='deco-lines' fill='none' d='M413 510h105zm-20 200h145zm-100 80h355z' class='base stroke-color stroke-medium' opacity='.5'/%3E%3Cpath id='deco-top' fill='none' d='M350 410c40 48 237 35 287-129' class='base stroke-color stroke-medium' opacity='.5'/%3E%3Cpath id='deco-side' fill='none' d='M685 867c67-7 77-49 46-88-5-6-52-11-58-15-62-34-139-92-160-153 0-66 70-113 7-137 65-45 102-110 110-195 4-46-5-52-44-85' class='base stroke-color stroke-medium' opacity='.5'/%3E%3C/svg%3E")}
+.pc.b.fn{background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' style='color-scheme:light only' xmlns:xlink='http://www.w3.org/1999/xlink' id='knight' viewBox='0 0 933 933'%3E%3Cstyle id='style-base'%3E.base%7Bfill-opacity:1%3Bfill-rule:evenodd%3Bstroke-miterlimit:4%3Bstroke-dasharray:none%3Bstroke-linecap:round%3Bstroke-linejoin:round%3Bstroke-opacity:1%7D.stroke-medium%7Bstroke-width:20%7D.stroke-color%7Bstroke:%23000%7D%3C/style%3E%3Cdefs id='defs2202'%3E%3ClinearGradient xlink:href='%23fillGradient' id='main-gradient' x1='824.6' x2='992.7' y1='119.5' y2='168.5' gradientTransform='translate(-3372 -24)scale(4.2241)' gradientUnits='userSpaceOnUse'/%3E%3ClinearGradient id='fillGradient'%3E%3Cstop id='stop0' offset='0' stop-color='%237f899b' stop-opacity='1'/%3E%3Cstop id='stop1' offset='1' stop-color='%231c1c2f' stop-opacity='1'/%3E%3C/linearGradient%3E%3C/defs%3E%3Cpath id='boundary' fill='none' stroke-width='35' d='m394 44-24 83-59-68-4 89c-91 91-38 111-172 316-9 13-25 24-29 42-15 80 88 60 106 69 71-57 100-58 137-98 42 15 108-3 147-45-26 77-136 132-169 267 39 37 0 74-47 71-52 12-34 109 19 109l452-3c63 0 72-92 30-108-40 0-58-41-26-69 4-74 3-143-12-214-2-7 2-22 10-24-6-23-30-45-40-69-5-11-18-17 19-18-11-22-61-58-76-78-6-7 25-13 19-19-35-37-85-50-109-68-8-6 23-15 14-21-33-21-102-48-145-65z' class='base stroke-color'/%3E%3Cpath id='main' fill='url(%23main-gradient)' d='m394 44-24 83-59-68-4 89c-91 91-38 111-172 316-9 13-25 24-29 42-15 80 88 60 106 69 71-57 100-58 137-98 42 15 108-3 147-45-26 77-136 132-169 267 39 37 0 74-47 71-52 12-34 109 19 109l452-3c63 0 72-92 30-108-40 0-58-41-26-69 4-74 3-143-12-214-2-7 2-22 10-24-6-23-30-45-40-69-5-11-18-17 19-18-11-22-61-58-76-78-6-7 25-13 19-19-35-37-85-50-109-68-8-6 23-15 14-21-33-21-102-48-145-65z' class='base stroke-color stroke-medium'/%3E%3Cpath id='eyebrow' fill='none' d='M336 282c-28 2-50 16-65 41' class='base stroke-color stroke-medium'/%3E%3Cpath id='eye' fill='none' d='M310 316c12 8 25 5 22-12' class='base stroke-color stroke-medium'/%3E%3Cpath id='nose' fill='none' d='M155 501c-13-5-23 17-15 17' class='base stroke-color stroke-medium'/%3E%3Cpath id='cheek' fill='none' d='M508 405c10-13 9-19 11-27' class='base stroke-color stroke-medium'/%3E%3Cpath id='deco-lines' fill='none' d='M644 699H370zm64 64H360z' class='base stroke-color stroke-medium' opacity='.5'/%3E%3Cpath id='deco-side' fill='none' d='M723 876c63 0 78-76 36-92-39 0-58-60-25-88 3-74 3-143-13-213-2-7 2-23 11-24-7-24-31-36-41-60-5-12-18-17 20-19-12-21-61-57-77-77-5-7 25-13 19-20-34-36-84-49-109-68-8-6 23-14 15-20-33-22-81-55-124-72' class='base stroke-color stroke-medium' opacity='.5'/%3E%3C/svg%3E")}
+.pc.b.fp{background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' style='color-scheme:light only' xmlns:xlink='http://www.w3.org/1999/xlink' id='pawn' viewBox='0 0 933.3 933.3'%3E%3Cstyle id='style-base'%3E.base%7Bfill-opacity:1%3Bfill-rule:evenodd%3Bstroke-miterlimit:4%3Bstroke-dasharray:none%3Bstroke-linecap:round%3Bstroke-linejoin:round%3Bstroke-opacity:1%7D.stroke-medium%7Bstroke-width:20%7D.stroke-color%7Bstroke:%23000%7D%3C/style%3E%3Cdefs id='defs2718'%3E%3ClinearGradient xlink:href='%23fillGradient' id='main-gradient' x1='462.1' x2='1135.2' y1='776.1' y2='839.4' gradientTransform='matrix(.64593 0 0 .64727 -26.8 91.2)' gradientUnits='userSpaceOnUse'/%3E%3ClinearGradient id='fillGradient'%3E%3Cstop id='stop0' offset='0' stop-color='%237f899b' stop-opacity='1'/%3E%3Cstop id='stop1' offset='1' stop-color='%231c1c2f' stop-opacity='1'/%3E%3C/linearGradient%3E%3C/defs%3E%3Cpath id='boundary' fill='none' stroke-width='35' d='M464 199.7c-72.1.9-129.8 57.9-134.5 124.2-2.4 33 45.3 89 73.2 106.6-137.4 31-2.7 70.6-2.7 127.7 0 39.4-53.5 65.7-24.2 91-15.9 64.2-62.6 87.4-119.2 113.5-27.9 35.7-13 95.3 39.4 98.7 36.7 2.4 307.5 3 345.4-1.1 58.3-6.4 67.4-67.3 40.5-101-57-17.6-118.7-42.6-131.1-108.7 30.3-25.4-31.6-52.2-31.6-92.4 0-57.1 150.2-90.4 6.4-127.7 27.9-17.6 72.4-73.6 73.2-106.6 1.6-64.7-65.8-125-134.7-124.2Z' class='base stroke-color'/%3E%3Cpath id='main' fill='url(%23main-gradient)' d='M464 199.7c-72.1.9-129.8 57.9-134.5 124.2-2.4 33 45.3 89 73.2 106.6-137.4 31-2.7 70.6-2.7 127.7 0 39.4-53.5 65.7-24.2 91-15.9 64.2-62.6 87.4-119.2 113.5-27.9 35.7-13 95.3 39.4 98.7 36.7 2.4 307.5 3 345.4-1.1 58.3-6.4 67.4-67.3 40.5-101-57-17.6-118.7-42.6-131.1-108.7 30.3-25.4-31.6-52.2-31.6-92.4 0-57.1 150.2-90.4 6.4-127.7 27.9-17.6 72.4-73.6 73.2-106.6 1.6-64.7-65.8-125-134.7-124.2Z' class='base stroke-color stroke-medium'/%3E%3Cpath id='deco-side' fill='none' d='M617.8 863.6c58.3-6.4 67.4-58 40.5-91.6-57-17.7-118.7-52-131.1-118 30.2-25.5-31.6-52.3-31.6-92.5 0-57.1 150.2-90.4 6.4-127.7 27.9-17.6 72.4-73.6 73.2-106.6 1.6-64.7-58.2-120-127.2-119.2' class='base stroke-color stroke-medium' opacity='.5'/%3E%3Cpath id='deco-lines' fill='none' d='M416.6 466h94.8zM408 627.7h112.2zm-99.4 153.5h320z' class='base stroke-color stroke-medium' opacity='.5'/%3E%3C/svg%3E")}
+.badge .pc.b.fb,.chg .pc.b.fb{background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' style='color-scheme:light only' xmlns:xlink='http://www.w3.org/1999/xlink' id='bishop' viewBox='0 0 933 933'%3E%3Cstyle id='style-base'%3E.base%7Bfill-opacity:1%3Bfill-rule:evenodd%3Bstroke-miterlimit:4%3Bstroke-dasharray:none%3Bstroke-linecap:round%3Bstroke-linejoin:round%3Bstroke-opacity:1%7D.stroke-medium%7Bstroke-width:20%7D.stroke-color%7Bstroke:%23000%7D%3C/style%3E%3Cdefs id='defs1927'%3E%3ClinearGradient xlink:href='%23fillGradient' id='main-gradient' x1='683' x2='739.5' y1='74' y2='69' gradientTransform='matrix(6.26023 0 0 7.12396 -3967 -262)' gradientUnits='userSpaceOnUse'/%3E%3ClinearGradient id='fillGradient'%3E%3Cstop id='stop0' offset='0' stop-color='%237f899b' stop-opacity='1'/%3E%3Cstop id='stop1' offset='1' stop-color='%231c1c2f' stop-opacity='1'/%3E%3C/linearGradient%3E%3Cmask id='slit' maskUnits='userSpaceOnUse' x='0' y='0' width='933' height='933'%3E%3Crect width='933' height='933' fill='%23fff'/%3E%3Cpath d='M561 148L501 284' stroke='%23000' stroke-width='90' stroke-linecap='round'/%3E%3C/mask%3E%3C/defs%3E%3Cg mask='url(%23slit)'%3E%3Cpath id='boundary' fill='none' stroke-width='35' d='M468 50c-34 0-62 23-62 52 0 8 2 16 6 23-71 20-122 79-122 164 3 78 42 150 105 194-63 25-3 53-3 118-46 83-62 91-140 149-6 4-52 9-57 14-32 42-15 110 46 114 42 3 417 4 460-1 67-7 78-78 47-116-5-6-52-12-59-16-61-33-139-82-160-144 0-65 71-93 8-118 65-45 102-110 109-194 4-46-21-92-60-125l-65 146c-6 15-23 21-38 15-15-7-22-24-15-39l67-153a197 197 0 0 0-13-5c5-8 8-17 8-26 0-29-28-52-62-52' class='base stroke-color'/%3E%3Cpath id='main' fill='url(%23main-gradient)' d='M468 50c-34 0-62 23-62 52 0 8 2 16 6 23-71 20-122 79-122 164 3 78 42 150 105 194-63 25-3 53-3 118-46 83-62 91-140 149-6 4-52 9-57 14-32 42-15 110 46 114 42 3 417 4 460-1 67-7 78-78 47-116-5-6-52-12-59-16-61-33-139-82-160-144 0-65 71-93 8-118 65-45 102-110 109-194 4-46-21-92-60-125l-65 146c-6 15-23 21-38 15-15-7-22-24-15-39l67-153a197 197 0 0 0-13-5c5-8 8-17 8-26 0-29-28-52-62-52' class='base stroke-color stroke-medium'/%3E%3Cpath id='deco-lines' fill='none' d='M413 510h105zm-20 200h145zm-100 80h355z' class='base stroke-color stroke-medium' opacity='.5'/%3E%3Cpath id='deco-top' fill='none' d='M350 410c40 48 237 35 287-129' class='base stroke-color stroke-medium' opacity='.5'/%3E%3Cpath id='deco-side' fill='none' d='M685 867c67-7 77-49 46-88-5-6-52-11-58-15-62-34-139-92-160-153 0-66 70-113 7-137 65-45 102-110 110-195 4-46-5-52-44-85' class='base stroke-color stroke-medium' opacity='.5'/%3E%3C/g%3E%3C/svg%3E")}
+/* pieces:end */
+.sq .pc{will-change:transform}
+/* фігура трохи менша за клітинку - лишається місце для координат у кутах */
+.sq > .pc{width:90%;height:90%}
+/* фігура із зарядом трохи менша і зсунута в лівий нижній кут: значок у правому верхньому
+   куті тоді не закриває жодної її частини (виріз слона, хрест короля, голову коня).
+   Значок - 39% клітинки, щоб заряд пішака легко відрізнити від заряду слона; фігура - 67%:
+   так значок разом із білою обвідкою не торкається навіть кутів тури й ферзя */
+.sq > .pc.charged{width:67%;height:67%;place-self:end start;margin:0 0 4% 4%;filter:drop-shadow(0 0 calc(var(--sq) * .045) rgba(230,180,60,.95))}
+.sq > .pc.ghost{position:absolute;inset:5%;width:auto;height:auto;z-index:0}
+.badge{position:absolute;top:2%;right:2%;width:39%;height:39%;border-radius:50%;background:var(--gold);
+  display:grid;place-items:center;box-shadow:0 0 0 calc(var(--sq) * .025) #fff;pointer-events:none;z-index:2}
+.badge .pc,.chg .pc{width:78%;height:78%}
+.chg{display:inline-grid;place-items:center;width:22px;height:22px;border-radius:50%;background:var(--gold);box-shadow:0 0 0 1.5px #fff}
+/* спалах рамки на полі, куди щойно став суперник (золотий - хід зарядом) */
+.land{position:absolute;inset:0;border:calc(var(--sq) * .06) solid rgba(255,255,255,.85);pointer-events:none;z-index:3;opacity:0}
+.land.charge{border-color:var(--gold);box-shadow:inset 0 0 calc(var(--sq) * .3) var(--gold)}
+.mk{position:absolute;pointer-events:none;z-index:3}
+.mk.n{width:33%;height:33%;border-radius:50%;background:var(--dot)}
+.mk.n.cap{width:100%;height:100%;background:transparent;border-radius:50%;box-sizing:border-box;border:calc(var(--sq) * .085) solid var(--dot)}
+.mk.t{width:30%;height:30%;background:var(--gold);transform:rotate(45deg);border-radius:3px;box-shadow:0 0 0 calc(var(--sq) * .025) rgba(255,255,255,.9)}
+.mk.t.cap{width:88%;height:88%;transform:none;border-radius:50%;background:transparent;border:calc(var(--sq) * .08) solid var(--gold);box-shadow:none}
+.mk.x{font-weight:800;color:#c8281e;font-size:calc(var(--sq) * .44);line-height:1}
+.coord{position:absolute;font-weight:700;font-size:calc(var(--sq) * .17);pointer-events:none;line-height:1}
+.coord.f{right:3%;bottom:2%}.coord.r{left:3%;top:3%}
+.sq .coord{color:var(--coord-on-light)}.sq.dark .coord{color:var(--coord-on-dark)}
+
+/* стан партії */
+.status{min-height:44px;background:var(--panel);border-radius:var(--r-md);padding:9px 14px;display:flex;flex-direction:column;gap:2px;justify-content:center}
+.status .main{font-weight:700;font-size:15px}
+/* правила партії, якщо вони не трофейні */
+.status .rtag{font-size:11px;letter-spacing:.06em;text-transform:uppercase;color:var(--ink-dim);font-weight:700}
+.status .rtag[hidden]{display:none}
+.status .event{font-size:14px;color:var(--ink-soft);line-height:1.4}
+.status .event:empty{display:none}
+.status .event.charge{color:var(--ink)}
+/* три месенджери в рядок, під ними «Скопіювати» і «Інше…» (або лише «Скопіювати» на всю ширину) */
+.status .event .sharebar{display:grid;grid-template-columns:repeat(6,1fr);gap:8px;margin-top:10px}
+.sharebar .btn{text-decoration:none;min-height:44px;grid-column:span 3;padding-inline:6px}
+.sharebar .tg,.sharebar .vb,.sharebar .wa{grid-column:span 2}
+.sharebar .btn:last-child:nth-child(4){grid-column:1 / -1}
+.sharebar .tg{background:#2aabee;color:#fff;box-shadow:0 3px 0 #1a7fb3}
+.sharebar .vb{background:#7360f2;color:#fff;box-shadow:0 3px 0 #4f3fc0}
+.sharebar .wa{background:#1faa53;color:#fff;box-shadow:0 3px 0 #13803c}
+.status .event .share-msg{display:block;margin-top:8px;font-size:13px;color:var(--ink-soft);overflow-wrap:anywhere}
+.status .event .invite{display:block;width:100%;box-sizing:border-box;margin-top:8px;font:13px var(--f-ui);padding:8px;border:1px solid var(--rule);border-radius:var(--r-sm);background:var(--panel-2);color:var(--ink)}
+.status .event.charge b{color:var(--gold-ink)}
+.status.check .main{color:#ff7b6b}
+/* онлайн без зв’язку */
+.status .conn{display:flex;gap:8px;align-items:flex-start;margin-top:4px;font-size:13.5px;line-height:1.4;color:#ffd7a0}
+.status .conn::before{content:"";flex:none;width:8px;height:8px;margin-top:5px;border-radius:50%;background:#f0a030;box-shadow:0 0 0 3px rgba(240,160,48,.25)}
+.status .conn[hidden]{display:none}
+/* перегляд ходу партії, що йде */
+.review{display:flex;align-items:center;gap:8px;margin-top:6px;flex-wrap:wrap}
+.review[hidden]{display:none}
+.review .rtext{flex:1;min-width:0;font-size:13px;color:var(--ink-soft)}
+.review .btn{min-height:38px}
+.review .btn.icon{width:44px}
+.board.viewing{box-shadow:0 0 0 3px var(--panel-3)}
+
+/* кнопки дій: великі, з іконкою і підписом */
+.toolbar{display:grid;grid-auto-flow:column;grid-auto-columns:1fr;gap:8px}
+.tool{background:var(--panel-2);border:0;border-radius:var(--r-md);padding:9px 4px 7px;cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:4px;
+  font-size:12px;font-weight:600;color:var(--ink-soft);min-height:58px;min-width:0;box-shadow:0 3px 0 var(--panel)}
+.tool svg{width:22px;height:22px;fill:none;stroke:var(--ink);stroke-width:2.1;stroke-linecap:round;stroke-linejoin:round}
+.tool .lbl{white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:100%}
+.tool:hover{background:var(--panel-3)}
+.tool:active{transform:translateY(2px);box-shadow:0 1px 0 var(--panel)}
+.tool[disabled]{opacity:.4;cursor:default;transform:none}
+.tool[aria-pressed="true"]{background:var(--danger-soft);color:#ffb0a6;box-shadow:inset 0 0 0 2px var(--danger)}
+.tool[aria-pressed="true"] svg{stroke:#ffb0a6}
+/* суперник пропонує нічию: кнопка «Прийняти» помітна, поки пропозиція в силі */
+.tool.offer{background:var(--accent);color:#fff;box-shadow:0 3px 0 var(--accent-deep)}
+.tool.offer svg{stroke:#fff}
+@media (prefers-reduced-motion:no-preference){.tool.offer{animation:offer 1.6s ease-in-out infinite}
+  @keyframes offer{50%{box-shadow:0 3px 0 var(--accent-deep),0 0 0 5px rgba(129,182,76,.35)}}}
+
+/* запис партії */
+.moves{list-style:none;margin:0;padding:8px 10px;background:var(--panel);border-radius:var(--r-md);
+  display:flex;flex-wrap:wrap;gap:4px 12px;font-size:13.5px;font-weight:700;max-height:112px;overflow:auto;min-height:38px;align-content:flex-start}
+.moves li{white-space:nowrap;display:flex;align-items:center;gap:3px}
+.moves li span:not(.n){padding:2px 5px;border-radius:3px;color:var(--ink-soft)}
+.moves .n{color:var(--ink-dim);font-weight:600;margin-right:1px}
+.moves span.t{color:var(--gold-ink)}
+.moves span.cur{background:rgba(255,255,255,.16);color:var(--ink)}
+.moves span[data-ply]{cursor:pointer}
+.moves span[data-ply]:hover{color:var(--ink)}
+.moves:empty::before{content:"Партія ще не почалася";color:var(--ink-dim);font-weight:500;padding:2px 0}
+.hint{background:var(--panel);border-radius:var(--r-md);padding:10px 12px;font-size:14.5px;line-height:1.45;display:flex;gap:10px;align-items:flex-start;color:var(--ink-soft)}
+.hint b{color:var(--gold-ink)}
+.hint p{margin:0;flex:1}
+.hint button{background:none;border:0;font-weight:700;cursor:pointer;color:var(--ink-dim);padding:0 4px;font-size:20px;line-height:1;box-shadow:none}
+
+/* діалоги: на телефоні - панель знизу, ширше - вікно по центру */
+dialog{border:0;border-radius:12px;background:var(--panel);color:var(--ink);padding:0;max-width:min(520px,calc(100vw - 24px));width:100%;box-shadow:0 10px 40px rgba(0,0,0,.5)}
+dialog::backdrop{background:rgba(0,0,0,.6)}
+@media (max-width:600px){
+  dialog{margin:auto 0 0;max-width:100vw;border-radius:16px 16px 0 0;padding-bottom:env(safe-area-inset-bottom,0px)}
+  dialog .dlg::before{content:"";align-self:center;width:38px;height:4px;border-radius:2px;background:var(--panel-3);margin:-6px 0 -4px}
+}
+@media (prefers-reduced-motion:no-preference){
+  dialog[open]{animation:sheet-in .24s cubic-bezier(.22,.8,.26,1)}
+  @keyframes sheet-in{from{transform:translateY(24px);opacity:0}}
+}
+.dlg{padding:18px 18px 16px;display:flex;flex-direction:column;gap:16px;max-height:calc(100dvh - 40px);overflow:auto}
+.dlg h2{margin:0;font-size:20px;font-weight:800;text-wrap:balance}
+.dlg h3{margin:0 0 7px;font-size:12px;letter-spacing:.06em;text-transform:uppercase;color:var(--ink-dim);font-weight:700}
+.dlg p{margin:0;line-height:1.5;color:var(--ink-soft)}
+.chips{display:flex;flex-wrap:wrap;gap:6px}
+.chip{border:0;background:var(--panel-2);border-radius:var(--r-md);padding:9px 13px;font-weight:700;font-size:14px;cursor:pointer;color:var(--ink-soft);box-shadow:0 2px 0 rgba(0,0,0,.35)}
+.chip:hover{background:var(--panel-3)}
+.chip.num{font-variant-numeric:tabular-nums}
+.chip[aria-pressed="true"]{background:var(--accent);color:#fff;box-shadow:0 2px 0 var(--accent-deep)}
+.chip[disabled]{opacity:.45;cursor:default}
+.tc-group{display:grid;grid-template-columns:70px 1fr;gap:6px 10px;align-items:center}
+.tc-group .lbl{font-size:13px;color:var(--ink-dim);font-weight:700}
+.custom{display:flex;gap:8px;align-items:center;font-size:14px;flex-wrap:wrap;color:var(--ink-soft)}
+.custom input{width:64px;font:inherit;padding:7px 8px;border:1px solid var(--rule);border-radius:var(--r-sm);background:var(--panel-2);color:var(--ink)}
+.dlg .foot{display:flex;gap:8px;justify-content:flex-end;flex-wrap:wrap}
+.dlg .foot .btn{min-height:46px;padding-inline:20px;font-size:15px}
+.levels{display:grid;grid-template-columns:repeat(4,1fr);gap:6px}
+.levels .chip{text-align:center;padding:8px 4px;display:flex;flex-direction:column;gap:2px;align-items:center}
+.levels .chip small{font-size:11px;font-weight:600;opacity:.85}
+.chip.duo{display:inline-flex;flex-direction:column;align-items:flex-start;gap:2px;text-align:left}
+.chip.duo small{font-size:11.5px;font-weight:600;opacity:.85}
+.promo{display:grid;grid-template-columns:repeat(4,1fr);gap:8px}
+.promo button{aspect-ratio:1;border:0;border-radius:var(--r-md);background:var(--sq-light);cursor:pointer;display:grid;place-items:center;padding:8%}
+.rules ul{margin:0;padding:0;list-style:none;display:flex;flex-direction:column;gap:9px;color:var(--ink-read)}
+.rules p{color:var(--ink-read)}
+.rules h3{color:var(--ink-soft)}
+.rules li{padding-left:1.1em;position:relative;line-height:1.5}
+.rules li::before{content:"-";position:absolute;left:0;color:var(--ink-soft)}
+.rules .lead-classical{padding:10px 12px;background:var(--panel-2);border-radius:var(--r-md);color:var(--ink-read)}
+.rules .lead-classical[hidden]{display:none}
+.rules .lead{font-size:17px;font-weight:700;line-height:1.4;padding:12px 14px;background:var(--gold-soft);border-radius:var(--r-md);color:var(--ink)}
+.legend{display:grid;grid-template-columns:28px 1fr;gap:8px 10px;align-items:center;font-size:14px;color:var(--ink-read)}
+.legend .sw{width:28px;height:28px;border-radius:3px;background:var(--sq-light);position:relative;display:grid;place-items:center;--sq:28px}
+.end-big{font-size:28px;font-weight:800;letter-spacing:-.01em}
+.share{display:flex;gap:6px}
+.share input{flex:1;min-width:0;font:inherit;font-size:13px;padding:8px;border:1px solid var(--rule);border-radius:var(--r-sm);background:var(--panel-2);color:var(--ink)}
+.note{font-size:13px;color:var(--ink-dim);line-height:1.45}
+.lobby{background:var(--panel);border-radius:var(--r-md);padding:10px 12px}
+.lobby h3{margin:0 0 6px;font-size:12px;letter-spacing:.06em;text-transform:uppercase;color:var(--accent);font-weight:700}
+.lobby ul{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:6px}
+.lobby li{display:flex;align-items:center;justify-content:space-between;gap:10px;font-size:14px}
+.lobby li span{min-width:0}
+/* акаунт */
+.account{display:flex;flex-direction:column;gap:10px;background:var(--panel-2);border-radius:var(--r-md);padding:12px}
+.account h3{margin:0}
+.account .pool-h{margin:2px 0 -4px;font-size:12px;color:var(--ink-soft);font-weight:700}
+.acc-lead{margin:0;color:var(--ink-read);line-height:1.45}
+.acc-err{margin:0;color:#ffb0a6;font-size:14px;line-height:1.45}
+.btn.wide{width:100%;min-height:46px}
+.acc-mail,.acc-name .row{display:flex;gap:8px}
+.acc-mail[hidden]{display:none}
+.acc-mail input,.acc-name input{flex:1;min-width:0;font:inherit;font-size:15px;padding:9px 10px;border:1px solid var(--rule);border-radius:var(--r-sm);background:var(--panel);color:var(--ink)}
+.acc-name{display:flex;flex-direction:column;gap:6px}
+.acc-name label{font-size:12.5px;color:var(--ink-soft);font-weight:600}
+.acc-actions{display:flex;flex-wrap:wrap;gap:8px}
+.account a{color:var(--gold-ink)}
+.end-rating{margin:0;font-weight:700;color:var(--ink)}
+.end-save{display:flex;gap:10px;align-items:center;background:var(--panel-2);border-radius:var(--r-md);padding:10px 12px;font-size:14px;color:var(--ink-read)}
+.end-save span{flex:1}
+/* статистика і перегляд партій */
+.btn.icon{width:40px;padding:0}
+.btn.icon svg{width:20px;height:20px;fill:none;stroke:currentColor;stroke-width:2.2;stroke-linecap:round;stroke-linejoin:round}
+.btn.danger{background:var(--danger);color:#fff;box-shadow:0 3px 0 #8f2a20}
+.btn.danger-ghost{background:transparent;box-shadow:none;color:#ff9d92}
+.btn.danger-ghost:hover{background:var(--danger-soft)}
+.stats-body{display:flex;flex-direction:column;gap:18px}
+.tiles{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+.tile{background:var(--panel-2);border-radius:var(--r-md);padding:10px;display:flex;flex-direction:column;gap:3px;min-width:0}
+.tile b{font-size:24px;font-weight:800;font-variant-numeric:tabular-nums;line-height:1.1}
+.tile span{font-size:12px;color:var(--ink-soft);line-height:1.3}
+.tablewrap{overflow-x:auto}
+table.stats{width:100%;border-collapse:collapse;font-size:14px}
+table.stats th{font-size:11.5px;text-transform:uppercase;letter-spacing:.05em;color:var(--ink-dim);font-weight:700;text-align:left;padding:4px 6px;border-bottom:1px solid var(--rule)}
+table.stats td{padding:7px 6px;border-bottom:1px solid var(--rule);color:var(--ink-read)}
+table.stats .num{text-align:right;font-variant-numeric:tabular-nums;width:3.2em}
+.facts{list-style:none;margin:0;padding:0;display:flex;flex-direction:column}
+.facts li{display:flex;justify-content:space-between;align-items:center;gap:12px;padding:7px 0;border-bottom:1px solid var(--rule);font-size:14px;color:var(--ink-read)}
+.facts b{font-variant-numeric:tabular-nums;display:inline-flex;align-items:center;gap:6px}
+.history{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:6px}
+.hrow{width:100%;display:flex;align-items:center;gap:10px;background:var(--panel-2);border:0;border-radius:var(--r-md);padding:8px 10px;cursor:pointer;text-align:left;color:var(--ink)}
+.hrow:hover{background:var(--panel-3)}
+.hrow:focus-visible{outline:2px solid var(--ink);outline-offset:2px}
+.res{flex:none;width:28px;height:28px;border-radius:5px;display:grid;place-items:center;font-weight:800;font-size:13px;color:#fff}
+.res.win{background:var(--accent)}.res.draw{background:#8b8987}.res.loss{background:var(--danger)}.res.local{background:var(--panel-3);font-size:11px}
+.hmain{flex:1;min-width:0;display:flex;flex-direction:column;gap:1px}
+.hop{font-weight:700;font-size:14px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.hsub{font-size:12px;color:var(--ink-soft);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.hdate{flex:none;font-size:12px;color:var(--ink-dim);text-align:right}
+.confirm{flex:1 1 100%;font-size:14px;color:var(--ink-read)}
+.rhead{display:flex;flex-direction:column;gap:2px}
+.rhead span{font-size:13px;color:var(--ink-soft)}
+.mini{display:grid;grid-template-columns:repeat(8,1fr);width:min(100%,460px);aspect-ratio:1;max-width:100%;margin-inline:auto;border-radius:3px;overflow:hidden}
+.mini .sq{cursor:default}
+.rnav{display:flex;align-items:center;justify-content:center;gap:6px}
+.rnav .btn{min-width:46px}
+.rply{min-width:110px;text-align:center;font-size:13px;color:var(--ink-soft);font-variant-numeric:tabular-nums}
+.stats-body .moves{max-height:96px;background:var(--bg);order:0}
+.stats-body .moves span[data-ply]{cursor:pointer}
+/* на вузькому екрані назву не видно, але вона лишається в заголовку h1 для пошуку і читачів екрана */
+@media (max-width:430px){.brand .word{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);clip-path:inset(50%)}}
+/* розкладка: на телефоні один стовпець; панелі «розчиняються», і їхні частини стають у звичному порядку */
+.play{display:flex;flex-direction:column;gap:8px}
+.side{display:contents}
+.bar{order:0}.hint{order:1}.lobby{order:2}.play{order:3}.status{order:4}.toolbar{order:5}.moves{order:7}.credit{order:8}
+.credit{margin:0;font-size:11.5px;line-height:1.9;color:var(--ink-dim);text-align:center}
+.credit a{color:var(--ink-soft);text-decoration:underline;text-underline-offset:2px;padding:4px 2px}
+/* широкий екран: дошка на всю висоту вікна ліворуч, праворуч панель зі станом, кнопками і записом */
+@media (min-width:900px) and (min-aspect-ratio:5/4){
+  .app{max-width:none;padding-block:16px;display:grid;grid-template-columns:var(--board) minmax(300px,380px);grid-template-rows:auto 1fr;
+    justify-content:center;align-items:start;column-gap:24px;row-gap:12px;
+    --board:min(100dvh - 32px - 104px, 100vw - 32px - 380px - 24px, 900px)}
+  .play{grid-column:1;grid-row:1 / span 2;width:var(--board)}
+  .side{display:flex;flex-direction:column;gap:12px;grid-column:2;min-width:0}
+  .side-2{background:var(--panel);border-radius:10px;padding:14px;box-sizing:border-box;align-self:stretch;min-height:0;grid-row:2}
+  .side-2 .status,.side-2 .moves{background:var(--bg)}
+  .side-2 .moves{flex:1;max-height:none}
+  .player{min-height:44px}
+  /* у вузькій бічній панелі назва - окремим рядком, кнопки - рівним рядком під нею */
+  .bar{flex-wrap:wrap;row-gap:12px}
+  .brand{flex:1 1 100%;font-size:19px}
+  .bar .row{flex:1 1 100%;display:grid;grid-template-columns:44px 44px 1fr 1fr;gap:8px}
+  .bar .row .btn{width:100%}
+}
+@media (prefers-reduced-motion:reduce){.btn:active,.tool:active{transform:none}}
+@media (max-width:380px){.brand{font-size:16px}.logo{width:26px;height:26px}.btn{padding:8px 10px;font-size:13px}.clock{font-size:19px;min-width:84px}.tool{font-size:11px}}
+</style>
+
+<div class="app" id="app">
+  <div class="side">
+  <header class="bar">
+    <h1 class="brand"><span class="logo" aria-hidden="true"><span class="pc w fn"></span></span><span class="word">Трофейні <span>шахи</span></span></h1>
+    <div class="row">
+      <button class="btn icon" id="btn-stats" type="button" aria-label="Статистика" title="Статистика"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 20V10M10 20V4M16 20v-7M22 20H2"/></svg></button>
+      <button class="btn icon" id="btn-sound" type="button" aria-pressed="true" aria-label="Звук увімкнено" title="Звук і вібрація"><svg viewBox="0 0 24 24" aria-hidden="true"></svg></button>
+      <button class="btn" id="btn-rules" type="button">Правила</button>
+      <button class="btn primary" id="btn-new" type="button">Нова гра</button>
+    </div>
+  </header>
+
+  <div class="hint" id="hint" hidden>
+    <p><b>Одне правило понад шахи:</b> беручи фігуру суперника, ваша фігура забирає її хід як одноразовий заряд. Узяли коня – можете раз сходити конем.</p>
+    <button type="button" id="hint-close" aria-label="Сховати підказку">×</button>
+  </div>
+
+  <section class="lobby" id="lobby" hidden aria-label="Відкриті онлайн-партії"></section>
+  </div>
+
+  <div class="play">
+
+  <section class="player" id="p-top"><span class="avatar" aria-hidden="true"></span><span class="pname"><span class="who"><i class="tomove"></i><span class="label">Машина · Аматор</span></span><span class="captured"></span></span><span class="charges" title="Заряди на дошці"></span><span class="clock" id="clock-top">10:00</span></section>
+  <div class="board-wrap"><div class="board" id="board" role="grid" aria-label="Шахова дошка"></div></div>
+  <section class="player" id="p-bottom"><span class="avatar" aria-hidden="true"></span><span class="pname"><span class="who"><i class="tomove"></i><span class="label">Ви</span></span><span class="captured"></span></span><span class="charges" title="Заряди на дошці"></span><span class="clock" id="clock-bottom">10:00</span></section>
+
+  </div>
+
+  <div class="side side-2">
+  <div class="status" id="status" aria-live="polite"><span class="rtag" id="rules-tag" hidden>Класичні шахи</span><span class="main">Ваш хід</span><span class="event"></span>
+    <span class="conn" hidden>Немає зв’язку із сервером. Ходи не загубляться – надішлемо, щойно інтернет повернеться.</span>
+    <div class="review" id="review" hidden><button type="button" class="btn icon" data-rv="prev" aria-label="Попередній хід">◀︎</button><button type="button" class="btn icon" data-rv="next" aria-label="Наступний хід">▶︎</button><span class="rtext"></span><button type="button" class="btn primary" data-rv="live">До партії</button></div>
+  </div>
+
+  <div class="toolbar">
+    <button class="tool" id="btn-undo" type="button"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 14 4 9l5-5"/><path d="M4 9h10.5a5.5 5.5 0 0 1 0 11H11"/></svg><span class="lbl">Скасувати</span></button>
+    <button class="tool" id="btn-threats" type="button" aria-pressed="false" title="Показати поля, які б'ють заряди суперника"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="7.5"/><circle cx="12" cy="12" r="2.5"/><path d="M12 1.5v4M12 18.5v4M1.5 12h4M18.5 12h4"/></svg><span class="lbl">Загрози</span></button>
+    <button class="tool" id="btn-flip" type="button"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 3.5v17M3.5 17 7 20.5l3.5-3.5M17 20.5v-17M13.5 7 17 3.5 20.5 7"/></svg><span class="lbl">Розвернути</span></button>
+    <button class="tool" id="btn-draw" type="button" hidden><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="8.5"/><path d="M8 10h8M8 14h8"/></svg><span class="lbl">Нічия</span></button>
+    <button class="tool" id="btn-resign" type="button"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 21V3.5M5 4h12.5l-2.5 4.5 2.5 4.5H5"/></svg><span class="lbl">Здатися</span></button>
+  </div>
+
+  <ol class="moves" id="moves" aria-label="Запис партії"></ol>
+  <p class="credit"><a href="privacy.html">Конфіденційність</a> · <a href="terms.html">Умови</a> · <a href="delete-account.html">Видалення акаунта</a> · <a href="licenses.html">Ліцензії</a><br>Фігури: набір Celtic, © Maurizio Monge, ліцензія MIT.</p>
+  </div>
+</div>
+
+<dialog id="dlg-new">
+  <form method="dialog" class="dlg" id="form-new">
+    <h2>Нова партія</h2>
+    <div>
+      <h3>Правила</h3>
+      <div class="chips" id="opt-rules">
+        <button type="button" class="chip duo" data-v="trofei-simple-r10" aria-pressed="true">Трофейні шахи<small>із зарядами</small></button>
+        <button type="button" class="chip duo" data-v="classical" aria-pressed="false">Класичні шахи<small>звичайні, без зарядів</small></button>
+      </div>
+    </div>
+    <div>
+      <h3>Режим</h3>
+      <div class="chips" id="opt-mode">
+        <button type="button" class="chip" data-v="ai" aria-pressed="true">Проти машини</button>
+        <button type="button" class="chip" data-v="local" aria-pressed="false">Удвох на одному пристрої</button>
+        <button type="button" class="chip" data-v="online" aria-pressed="false">З другом онлайн</button>
+      </div>
+    </div>
+    <div id="grp-level">
+      <h3>Рівень машини</h3>
+      <div class="levels" id="opt-level"></div>
+    </div>
+    <div id="grp-color">
+      <h3>Ваш колір</h3>
+      <div class="chips" id="opt-color">
+        <button type="button" class="chip" data-v="w" aria-pressed="true">Білі</button>
+        <button type="button" class="chip" data-v="b" aria-pressed="false">Чорні</button>
+        <button type="button" class="chip" data-v="r" aria-pressed="false">Випадково</button>
+      </div>
+    </div>
+    <div>
+      <h3>Контроль часу</h3>
+      <div class="tc-group" id="opt-tc">
+        <span class="lbl">Куля</span><div class="chips"><button type="button" class="chip num" data-v="1|0">1|0</button><button type="button" class="chip num" data-v="2|1">2|1</button></div>
+        <span class="lbl">Бліц</span><div class="chips"><button type="button" class="chip num" data-v="3|0">3|0</button><button type="button" class="chip num" data-v="3|2">3|2</button><button type="button" class="chip num" data-v="5|0">5|0</button><button type="button" class="chip num" data-v="5|5">5|5</button></div>
+        <span class="lbl">Рапід</span><div class="chips"><button type="button" class="chip num" data-v="10|2">10|2</button><button type="button" class="chip num" data-v="15|10">15|10</button><button type="button" class="chip num" data-v="30|0">30|0</button></div>
+        <span class="lbl">Інше</span><div class="chips"><button type="button" class="chip" data-v="none">Без годинника</button><button type="button" class="chip" data-v="custom">Свій</button></div>
+      </div>
+      <div class="custom" id="tc-custom" hidden>
+        <label for="tc-min">Хвилин</label><input id="tc-min" type="number" min="1" max="180" value="7" inputmode="numeric">
+        <label for="tc-inc">+ секунд за хід</label><input id="tc-inc" type="number" min="0" max="60" value="3" inputmode="numeric">
+      </div>
+      <p class="note">Перше число – хвилини на партію, друге – секунди, що додаються за кожен хід.</p>
+    </div>
+    <p class="note" id="online-note" hidden></p>
+    <div class="foot">
+      <button type="button" class="btn" value="cancel" id="new-cancel">Скасувати</button>
+      <button type="button" class="btn primary" id="new-start">Почати</button>
+    </div>
+  </form>
+</dialog>
+
+<dialog id="dlg-rules">
+  <div class="dlg rules">
+    <h2>Правила</h2>
+    <p class="lead-classical" id="rules-classical" data-nosnippet hidden>Зараз ви граєте в <b>класичні шахи</b>: зарядів немає, усе як у звичайних шахах. Нижче – правила трофейних шахів; обрати їх можна в «Нова гра».</p>
+    <p>Трофейні шахи – усе як у звичайних шахах, плюс одне правило.</p>
+    <p class="lead">Беручи фігуру суперника, ваша фігура забирає її хід як одноразовий заряд.</p>
+    <ul>
+      <li>Узяли коня – можете раз сходити конем. Узяли туру – раз турою. Так само зі слоном, ферзем і пішаком: за пішака – раз сходити пішаком, на клітинку вперед або взяти навскіс уперед.</li>
+      <li>Заряд дають лише тоді, коли він щось додає. Тура, що взяла туру, і пішак, що взяв пішака, не отримують нічого – вони й так так ходять.</li>
+      <li>Фігура носить один заряд. Витратила – може отримати наступний.</li>
+      <li>Заряд витрачається замість звичайного ходу і зникає разом із фігурою.</li>
+      <li>Король зарядів не отримує.</li>
+    </ul>
+    <p>Хід зарядом – звичайний хід: ним можна брати, давати шах і мат. А значить, і королеві не можна ставати під заряд суперника.</p>
+    <h3>Що на дошці</h3>
+    <div class="legend">
+      <span class="sw"><span class="badge" style="width:62%;height:62%;top:19%;right:19%"><span class="pc b fn"></span></span></span><span>Заряд на фігурі: яку фігуру вона взяла і чиїм ходом може раз сходити.</span>
+      <span class="sw"><span class="mk n"></span></span><span>Звичайний хід.</span>
+      <span class="sw"><span class="mk t" style="width:42%;height:42%"></span></span><span>Хід зарядом. Показується одразу, разом зі звичайними.</span>
+      <span class="sw"><span class="mk x" style="font-size:18px">×</span></span><span>Сюди не можна: це поле б'є заряд суперника.</span>
+      <span class="sw"><span class="mk" style="inset:0;background:repeating-linear-gradient(135deg,rgba(200,40,30,.42) 0 3px,transparent 3px 8px);box-shadow:inset 0 0 0 2px rgba(200,40,30,.55);border-radius:5px"></span></span><span>Кнопка «Загрози»: усі поля, які б'ють заряди суперника.</span>
+      <span class="sw" style="background:var(--last-to)"></span><span>Жовтим підсвічено останній хід: звідки і куди сходила фігура. Фігуру можна перетягнути або торкнутися її, а потім поля.</span>
+    </div>
+    <div class="foot"><button type="button" class="btn primary" id="rules-close">Зрозуміло</button></div>
+  </div>
+</dialog>
+
+<dialog id="dlg-stats">
+  <div class="dlg">
+    <h2>Статистика</h2>
+    <div id="stats-body" class="stats-body"></div>
+  </div>
+</dialog>
+
+<dialog id="dlg-confirm">
+  <div class="dlg">
+    <h2 id="confirm-title">Здатися?</h2>
+    <p id="confirm-text"></p>
+    <div class="foot">
+      <button type="button" class="btn" id="confirm-no">Скасувати</button>
+      <button type="button" class="btn danger" id="confirm-yes">Здатися</button>
+    </div>
+  </div>
+</dialog>
+
+<dialog id="dlg-promo">
+  <div class="dlg">
+    <h2>Підвищення</h2>
+    <div class="promo" id="promo-opts"></div>
+  </div>
+</dialog>
+
+<dialog id="dlg-end">
+  <div class="dlg">
+    <div class="end-big" id="end-title">Мат</div>
+    <p id="end-text"></p>
+    <p id="end-rating" class="end-rating" hidden></p>
+    <div id="end-save" class="end-save" hidden><span>Ви граєте як гість. Увійдіть, щоб ця партія і статистика не загубилися.</span><button type="button" class="btn" id="end-save-btn">Увійти</button></div>
+    <div class="foot">
+      <button type="button" class="btn" id="end-stats">Статистика</button>
+      <button type="button" class="btn" id="end-close">Подивитися дошку</button>
+      <button type="button" class="btn primary" id="end-again">Ще партію</button>
+    </div>
+  </div>
+</dialog>
+
+<script src="supabase.js?v=c40509266662"></script>
+<script type="module" src="app.js?v=c40509266662"></script>
+
+<script type="module" src="install.js?v=c40509266662"></script>
+</body>
+</html>
